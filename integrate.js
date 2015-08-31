@@ -121,6 +121,16 @@ WebApp.update = function()
 {
     var track = {}
 
+	// Don't use [no title]
+	if (document.getElementById('currentsong').firstChild.textContent == '[no title]' &&
+	document.getElementById('currentartist').firstChild.textContent == '[no artist]' &&
+	document.getElementById('currentalbum').firstChild.textContent == '[no album]') {
+	state = PlaybackState.UNKNOWN;
+	track.title = null;
+	track.album = null;
+	track.artist = null;
+	}
+	else {
 	var artistDiv = document.getElementById('currentartist');
 	try{
 		var artist = artistDiv.firstChild;
@@ -154,8 +164,8 @@ WebApp.update = function()
 	catch (e){
 		track.artLocation = null;
 	}
-
-
+	}
+	
 	player.setTrack(track);
 
 	var state = PlaybackState.UNKNOWN
@@ -164,7 +174,8 @@ WebApp.update = function()
 		}
 	catch (e) {
 		state = PlaybackState.UNKNOWN
-	} 
+	}	
+	
 
 	//Set state to unknown if there is no available song
 	if(!track.title){
