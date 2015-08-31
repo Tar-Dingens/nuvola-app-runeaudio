@@ -121,56 +121,43 @@ WebApp.update = function()
 {
     var track = {}
 
+	try{
+		var artist = document.getElementById('currentartist').firstChild.textContent;
+		var song = document.getElementById('currentsong').firstChild.textContent;
+		var album = document.getElementById('currentalbum').firstChild.textContent;
+		var cover_element = document.getElementById('cover-art').style.backgroundImage;
+		var album_art = cover_element.split("(")[1].split(")")[0];
+	}
+	catch (e){
+		var artist = null;
+		var song = null;
+		var album = null;
+		var album_art = null;				
+	}	
+
 	// Don't use [no title]
-	if (document.getElementById('currentsong').firstChild.textContent == '[no title]' &&
-	document.getElementById('currentartist').firstChild.textContent == '[no artist]' &&
-	document.getElementById('currentalbum').firstChild.textContent == '[no album]') {
-	state = PlaybackState.UNKNOWN;
-	track.title = null;
-	track.album = null;
-	track.artist = null;
-	}
-	else {
-	var artistDiv = document.getElementById('currentartist');
-	try{
-		var artist = artistDiv.firstChild;
-		track.artist = artist.innerText || artist.textContent;
-	}
-	catch (e){
-		track.artist = null;
-	}
-
-	try{
-		var song = document.getElementById('currentsong').firstChild;
-		track.title = song.innerText || song.textContent;         
-	}
-	catch (e){
+	if (	song == '[no title]' &&
+		artist == '[no artist]' &&
+		album == '[no album]') {
+		state = PlaybackState.UNKNOWN;
 		track.title = null;
-	}
-
-	var album = document.getElementById('currentalbum').firstChild;
-	try{		
-		track.album = album.innerText || album.textContent;
-	}
-	catch (e){
 		track.album = null;
-	} 
-
-
-	try{		
-		var album_art = document.getElementById('cover-art').style.backgroundImage;
-		track.artLocation = album_art.split("(")[1].split(")")[0];
-	}
-	catch (e){
+		track.artist = null;
 		track.artLocation = null;
 	}
+	else {
+		track.artist = artist;
+		track.title = song;
+		track.album = album;
+		track.artLocation = album_art;
 	}
 	
 	player.setTrack(track);
 
 	var state = PlaybackState.UNKNOWN
 	try {
-		state = ((document.getElementById('countdown-display').firstChild.className.length>31))? PlaybackState.PAUSED : PlaybackState.PLAYING;
+		state = ((document.getElementById('countdown-display').firstChild.className.length>31))? 
+		PlaybackState.PAUSED : PlaybackState.PLAYING;
 		}
 	catch (e) {
 		state = PlaybackState.UNKNOWN
