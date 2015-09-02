@@ -34,7 +34,6 @@ var ADDRESS_DEFAULT = "default";
 var ADDRESS_CUSTOM = "custom";
 var HOST = "app.host";
 var PORT = "app.port";
-var State = Nuvola.PlaybackState;
 
 // Create new WebApp prototype
 var WebApp = Nuvola.$WebApp();
@@ -122,6 +121,8 @@ WebApp.update = function()
 {
     var track = {}
 
+		var state = PlaybackState.UNKNOWN;
+
 	try{
 		var artist = document.getElementById('currentartist').firstChild.textContent;
 		var song = document.getElementById('currentsong').firstChild.textContent;
@@ -140,7 +141,7 @@ WebApp.update = function()
 	if (	song == '[no title]' &&
 		artist == '[no artist]' &&
 		album == '[no album]') {
-		this.state = State.UNKNOWN;
+		state = PlaybackState.UNKNOWN;
 		track.title = null;
 		track.album = null;
 		track.artist = null;
@@ -155,31 +156,23 @@ WebApp.update = function()
 	
 	player.setTrack(track);
 
-
-
-	// STATES
-
-
-	var state = State.UNKNOWN;
-
 	try {
-		state = ((document.getElementById('countdown-display').firstChild.className.length>31))? 
-		state = State.PAUSED : state = State.PLAYING;
+		state = ((document.getElementById('countdown-display').firstChild.className.length>31))? 			PlaybackState.PAUSED : state = PlaybackState.PLAYING;
 		}
 	catch (e) {
-		state = State.UNKNOWN;
+		state = PlaybackState.UNKNOWN;
 	}	
 	
 	//Set state to unknown if there is no available song
 	if(!track.title){
-		state = State.UNKNOWN;
+		state = PlaybackState.UNKNOWN;
 		player.setCanPause(false);
 		player.setCanPlay(false);
 		player.setCanGoPrev(false);
 		player.setCanGoNext(false);
 	} else {
-		player.setCanPlay(state === State.PAUSED);
-		player.setCanPause(state === State.PLAYING);
+		player.setCanPlay(state === PlaybackState.PAUSED);
+		player.setCanPause(state === PlaybackState.PLAYING);
 		player.setCanGoPrev(true);
 		player.setCanGoNext(true);
 	}		
