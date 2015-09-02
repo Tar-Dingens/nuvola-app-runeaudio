@@ -48,6 +48,19 @@ var _ = Nuvola.Translate.gettext;
 // Create media player component
 var player = Nuvola.$object(Nuvola.MediaPlayer);
 
+// get state
+var getState = function() {
+	var state = PlaybackState.UNKNOWN;
+	try {
+		state = ((document.getElementById('countdown-display').firstChild.className.length>31))?
+		PlaybackState.PAUSED : state = PlaybackState.PLAYING;
+	}
+	catch (e) {
+		state = PlaybackState.UNKNOWN;
+	}
+	return state;
+}
+
 // Home Request
 WebApp._onHomePageRequest = function(emitter, result)
 {
@@ -121,7 +134,7 @@ WebApp.update = function()
 {
     var track = {}
 
-		var state = PlaybackState.UNKNOWN;
+	var state = getState()
 
 	try{
 		var artist = document.getElementById('currentartist').firstChild.textContent;
@@ -154,14 +167,7 @@ WebApp.update = function()
 		track.artLocation = album_art;
 	}
 	
-	player.setTrack(track);
-
-	try {
-		state = ((document.getElementById('countdown-display').firstChild.className.length>31))? 			PlaybackState.PAUSED : state = PlaybackState.PLAYING;
-		}
-	catch (e) {
-		state = PlaybackState.UNKNOWN;
-	}	
+	player.setTrack(track);	
 	
 	//Set state to unknown if there is no available song
 	if(!track.title){
@@ -186,16 +192,17 @@ WebApp.update = function()
 // Handler of playback actions
 WebApp._onActionActivated = function(emitter, name, param)
 {
+	var state = getState()	
 	switch (name)
 	{
 		case PlayerAction.TOGGLE_PLAY:
 			document.getElementById('play').click();
 		break;
 		case PlayerAction.PLAY:
-			document.getElementById('play').click();
+			if (state === PlaybackState.PAUSED){document.getElementById('play').click()};
 		break;
 		case PlayerAction.PAUSE:
-			document.getElementById('play').click();
+			if (state === PlaybackState.PLAYING){document.getElementById('play').click()};
 		break;
 		case PlayerAction.STOP:
 			document.getElementById('stop').click();
